@@ -1,0 +1,364 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- UNIVERSAL PREAMBLE BLOCK ---
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{fontspec}
+
+\usepackage[english, provide=*]{babel}
+
+\babelprovide[import, onchar=ids fonts]{english}
+
+% Set default/Latin font to Serif for an academic look, and Sans for headings
+\babelfont{rm}{Noto Serif}
+\babelfont{sf}{Noto Sans}
+
+% Math and formatting packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{float} % Added float package to strictly position figures
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{colortbl}
+
+% Package for clickable links (GitHub & TOC)
+\usepackage[colorlinks=true, linkcolor=darkgray, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Custom Section Formatting & Dividers ---
+\titleformat{\section}
+  {\color{darkgray}\sffamily\Large\bfseries}
+  {\thesection}{1em}{}[\vspace{-0.5em}\rule{\textwidth}{0.8pt}]
+
+\titleformat{\subsection}
+  {\color{darkgray}\sffamily\large\bfseries}
+  {\thesubsection}{1em}{}
+
+\newcommand{\cooldivider}{
+    \vspace{1.5em}
+    \noindent\makebox[\linewidth]{
+        \color{lightgray}\rule{0.3\textwidth}{0.8pt} \quad \textcolor{darkgray}{$\blacklozenge$} \quad \color{lightgray}\rule{0.3\textwidth}{0.8pt}
+    }
+    \vspace{1.5em}
+}
+
+% --- EXPERIMENT 1 TITLE SETUP ---
+\title{\vspace{-2em}\sffamily\textbf{\Huge Experiment 1: Theory and Design \\ \vspace{0.2em} \Large of a 4-Bit Ripple Carry Adder}}
+\author{}
+\date{}
+
+\begin{document}
+
+% ==========================================
+%          INTRODUCTION & PREFACE
+% ==========================================
+\newpage
+
+\begin{center}
+    \sffamily\textbf{\Huge Preface and Introduction}
+\end{center}
+\addcontentsline{toc}{part}{Preface and Introduction}
+\vspace{2em}
+
+\section*{Computer Organization and Architecture}
+Computer Architecture acts as the foundational blueprint of a computer system. It dictates the functional behavior of a computer system from the programmer's perspective, involving aspects such as the instruction set, data formats, and memory addressing. Computer Organization, on the other hand, deals with the structural relationships and the operational units that realize this architectural abstraction. Together, they form the core of understanding how digital logic is combined to build complex processing units capable of executing high-level software.
+
+\vspace{1.5em}
+
+\section*{Logisim-Evolution Simulator}
+The circuits presented in this manual have been designed, simulated, and verified using \textbf{Logisim-Evolution}. Logisim-Evolution is an advanced, educational graphical tool for designing and simulating digital logic circuits. It is an upgraded, actively maintained fork of the original Logisim, featuring a modernized interface, real-world electronic components, FPGA board-level simulation support, and the ability to export circuits directly to VHDL or Verilog. This allows for an intuitive, visual approach to building complex architectural components like adders, multiplexers, ALUs, and memory arrays.
+
+\vspace{1.5em}
+
+\section*{GitHub Repository}
+
+For full transparency, reproducibility, and source control, the complete Logisim-Evolution project files (`.circ` files) corresponding to the experiments in this manual have been open-sourced. 
+
+\vspace{0.5em}
+\noindent You can access, download, and review the simulation files on my GitHub repository at the following link:\par
+\vspace{0.5em}
+\noindent\textbf{Repository URL:} \href{https://github.com/OFF-rtk/COAVLAB}{https://github.com/OFF-rtk/COAVLAB}
+
+\vspace{2em}
+
+% ==========================================
+%              EXPERIMENT 1
+% ==========================================
+% (Below is your exact provided code starting from \maketitle)
+
+\maketitle
+\addcontentsline{toc}{part}{Experiment 1: 4-Bit Ripple Carry Adder}
+\vspace{-3em}
+
+\section{Introduction to Arithmetic Operations}
+Arithmetic operations such as addition, subtraction, multiplication, and division are fundamental processes implemented in digital computers using basic logic gates (AND, OR, NOR, NAND, etc.). Among these, addition is the most critical operation. Once binary addition is successfully implemented, it can be leveraged to perform other operations:
+\begin{itemize}
+    \item \textbf{Multiplication} via repeated addition.
+    \item \textbf{Subtraction} by negating one operand (using two's complement arithmetic).
+    \item \textbf{Division} via repeated subtraction.
+\end{itemize}
+
+\section{Adder Architectures}
+A \textbf{Half Adder} is a simple combinational circuit used to add two single-bit binary numbers. However, to add $N$-bit binary numbers, we must create a logical circuit cascading multiple \textbf{Full Adders}.
+
+Each full adder accepts three inputs: two significant bits and a carry-in ($C_{in}$) which represents the carry-out ($C_{out}$) generated by the previous lower-order adder. This specific architecture is known as a \textbf{Ripple Carry Adder (RCA)}, because each carry bit sequentially "ripples" through the circuit to the next full adder.
+
+\textit{Note: For the least significant bit (LSB), the first full adder may be replaced by a half adder if there is no initial carry-in to the system.}
+
+\subsection{4-Bit Ripple Carry Adder Block Diagram}
+Below is the structural flow of a 4-bit Ripple Carry Adder adding two 4-bit words, $A (A_3A_2A_1A_0)$ and $B (B_3B_2B_1B_0)$, with an initial carry-in $C_0$:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{RCA.png} 
+  \caption{Structural flow of a 4-bit Ripple Carry Adder.}
+  \label{fig:rca_block}
+\end{figure}
+
+\section{Delay and Performance Analysis}
+The layout of a ripple carry adder is simple and highly structured, which allows for fast design times. However, the RCA is relatively slow in operation. Because each full adder must wait for the carry bit to be calculated and propagated from the previous stage, the delays accumulate.
+
+The gate delay can be calculated by inspecting the full adder circuit. Each full adder typically requires three levels of logic. For instance, in a 32-bit Ripple Carry Adder consisting of 32 full adders, the worst-case critical path delay would be calculated as:
+\begin{itemize}
+    \item $31 \times 2$ (gate delays for carry propagation across 31 stages)
+    \item $+ 3$ (gate delays for computing the final sum)
+    \item \textbf{Total = 65 gate delays.}
+\end{itemize}
+
+\section{Design Issues and Boolean Expressions}
+To construct the adder, we must derive the corresponding Boolean expressions.
+
+For a \textbf{Half Adder} circuit, the Sum and Carry outputs for inputs $A$ and $B$ are defined as:
+\begin{itemize}
+    \item \textbf{Sum} = $A \oplus B$
+    \item \textbf{Carry} = $A \cdot B$
+\end{itemize}
+
+For a \textbf{Full Adder} circuit, the outputs depend on inputs $A$, $B$, and $C$ ($C_{in}$). The unoptimized Sum and Carry-out expressions are formulated using Sum of Products (SOP):
+\begin{itemize}
+    \item \textbf{Sum} = $A'B'C + A'BC' + AB'C' + ABC$
+    \item \textbf{Carry} = $A'BC + AB'C + ABC' + ABC$
+\end{itemize}
+
+While these expressions allow us to design the circuit directly using basic gates, we can check for logically equivalent statements that lead to a more structured and hardware-efficient circuit. With algebraic manipulation, we can optimize these equations:
+
+\subsection{Simplifying the Sum}
+\begin{align*}
+Sum &= A'B'C + A'BC' + AB'C' + ABC \\
+Sum &= (A'B' + AB)C + (A'B + AB')C' \\
+Sum &= (A \oplus B)'C + (A \oplus B)C' \\
+Sum &= A \oplus B \oplus C
+\end{align*}
+
+\subsection{Simplifying the Carry}
+\begin{align*}
+Carry &= A'BC + AB'C + ABC' + ABC \\
+Carry &= (A'B + AB')C + AB(C' + C) \\
+Carry &= (A \oplus B)C + AB(1) \\
+Carry &= AB + (A \oplus B)C
+\end{align*}
+
+By recognizing that $(A \oplus B)$ is computed for the Sum, we can reuse this specific gate output to compute the Carry, significantly reducing the required hardware components and structuring the physical design optimally.
+
+\section{Logisim Circuit Implementations}
+The following figures detail the physical gate-level implementations of the adder components constructed using Logisim Evolution.
+
+\subsection{Half Adder Implementation}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{HA.png} 
+  \caption{Logic gate implementation of a Half Adder.}
+  \label{fig:half_adder}
+\end{figure}
+
+\vspace{3em}
+
+\subsection{Full Adder Implementation}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{FA.png} 
+  \caption{Logic gate implementation of a Full Adder.}
+  \label{fig:full_adder}
+\end{figure}
+
+
+\subsection{Final 4-Bit RCA Logisim Evolution Diagram}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{RCA_s.png} 
+  \caption{Complete 4-Bit Ripple Carry Adder implemented in Logisim Evolution.}
+  \label{fig:final_rca}
+\end{figure}
+
+% ==========================================
+%              EXPERIMENT 2
+% ==========================================
+\newpage
+
+% Manual Title Block for Consistency with Experiment 1
+\begin{center}
+    \sffamily\textbf{\Huge Experiment 2: Simulating \\ \vspace{0.1em} Microcontroller Behavior} \\
+    \vspace{0.5em}
+    \sffamily\textbf{\Large using Flip-Flops and Logic Gates}
+\end{center}
+
+\addcontentsline{toc}{part}{Experiment 2: Simulating Microcontroller Behavior}
+\vspace{3em}
+
+% Reset the section counter so "Aim" starts at 1
+\setcounter{section}{0}
+
+\section{Aim}
+To simulate the primitive behavior of a microcontroller's datapath using D flip-flops and logic gates. This experiment focuses on executing a basic logical instruction (AND) synchronously and observing how clock signals govern the flow of data through hardware registers.
+
+\section{Theory and Introduction}
+In digital electronics and systems engineering, the behavior of microcontrollers can be understood by breaking them down into their fundamental logical components. A microcontroller's central processing unit (CPU) relies heavily on two types of logic: \textbf{Sequential Logic} (for memory and state) and \textbf{Combinational Logic} (for computation). 
+
+This experiment isolates and simulates the most basic interaction between a CPU's register file and its Arithmetic Logic Unit (ALU).
+
+\subsection{Flip-Flops as Hardware Registers}
+Flip-flops are bistable multivibrators that serve as the fundamental building blocks of memory elements. In a microcontroller, flip-flops are grouped together to form \textbf{Registers} (such as Accumulators or General Purpose Registers) which hold data temporarily during processing.
+\begin{itemize}
+    \item \textbf{D Flip-Flop (Data):} A D flip-flop captures the input data ($D$) strictly on the active edge (rising or falling) of a clock signal. This synchronous behavior ensures that data is only updated at discrete time intervals, replicating the instruction cycle of a processor.
+\end{itemize}
+
+\subsection{Combinational Logic as an ALU}
+The Arithmetic Logic Unit (ALU) performs mathematical and bitwise operations. In this simulation, a basic \textbf{AND Gate} serves as a primitive, single-instruction ALU. It takes the operands stored in the D flip-flops and computes the logical conjunction.
+\begin{itemize}
+    \item \textbf{AND Gate:} Outputs a logic $1$ only if all input operands are $1$.
+\end{itemize}
+
+\subsection{The Clock Signal}
+The clock acts as the heartbeat of the microcontroller system. It synchronizes the state changes of the flip-flops. Data placed at the inputs of the flip-flops will not propagate to the ALU until the clock transitions, demonstrating how a CPU sequences operations.
+
+\section{Procedure}
+The following steps detail the construction of the registered logic circuit in Logisim-Evolution:
+
+\begin{enumerate}
+    \item \textbf{Initialize Registers:} Navigate to the \textit{Memory} component library and place two \textbf{D Flip-Flops} into the workspace. These act as our two 1-bit input registers.
+    \item \textbf{Configure Inputs:} 
+    \begin{itemize}
+        \item Add an input pin connected to the $D$ port of the first flip-flop and label it \texttt{Input1}.
+        \item Add an input pin connected to the $D$ port of the second flip-flop and label it \texttt{Input2}.
+    \end{itemize}
+    \item \textbf{Synchronize the Clock:} Add a \textbf{Clock} component and wire it simultaneously to the clock-enable ($>$ ) pins of both D flip-flops. This ensures both registers load data on the same clock edge.
+    \item \textbf{Implement the ALU Logic:} Place an \textbf{AND Gate} in the workspace. Route the output ($Q$) of the first flip-flop to the top input of the AND gate, and the output ($Q$) of the second flip-flop to the bottom input.
+    \item \textbf{Observe Output:} Connect a final Output pin to the output node of the AND gate.
+    \item \textbf{Simulation:} Toggle \texttt{Input1} and \texttt{Input2}. Observe that the final output does not change until the Clock component is manually toggled (simulating a clock tick), proving the synchronous nature of the registers.
+\end{enumerate}
+
+\section{VLAB Circuit Implementation}
+
+\subsection{Microcontroller Datapath Simulation Diagram}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{MCB.png}
+  \caption{Simulation of a synchronous logical instruction using D Flip-Flops and an AND gate.}
+  \label{fig:exp2_circuit}
+\end{figure}
+
+% ==========================================
+%              EXPERIMENT 3
+% ==========================================
+\newpage
+
+\begin{center}
+    \sffamily\textbf{\Huge Experiment 3: Design of a 4-Bit \\ \vspace{0.1em} Carry Lookahead Adder (CLA)} \\
+    \vspace{0.4em}
+    \sffamily\textbf{\Large High-Speed Addition via Parallel Carry Generation}
+\end{center}
+
+\addcontentsline{toc}{part}{Experiment 3: 4-Bit Carry Lookahead Adder}
+\vspace{2em}
+
+\setcounter{section}{0}
+
+\section{Aim}
+To design and simulate a 4-bit Carry Lookahead Adder (CLA) to understand how parallel carry generation reduces propagation delay compared to a Ripple Carry Adder. The experiment focuses on implementing Carry Propagate ($P$) and Carry Generate ($G$) functions to compute carries simultaneously.
+
+\section{Components Required}
+The following components and features of \textbf{Logisim-Evolution} are utilized in this implementation:
+\begin{itemize}
+    \item \textbf{Half Adders (HA):} Used as sub-circuits to compute the initial $P_i$ and $G_i$ signals for each bit position.
+    \item \textbf{Multi-Input Logic Gates:} High-fan-in AND and OR gates used to implement the expanded carry equations ($C_1$ through $C_4$).
+    \item \textbf{Logisim Tunnels:} Utilized to manage complex signal routing and avoid wire conflicts, ensuring a clean and readable schematic.
+    \item \textbf{Input Pins and Probes:} For data loading and real-time verification of carry bits.
+\end{itemize}
+
+\section{Theory}
+The primary bottleneck in a Ripple Carry Adder is the dependency of each stage on the carry-out of the previous stage. In an $n$-bit RCA, the carry must pass through $2n$ gate levels. The \textbf{Carry Lookahead Adder} eliminates this dependency by calculating all carry bits in parallel based on the input bits.
+
+\subsection{Carry Generate and Propagate Functions}
+For any bit stage $i$, we define two signals:
+\begin{itemize}
+    \item \textbf{Generate ($G_i$):} $G_i = A_i \cdot B_i$. A carry is generated if both inputs are 1, regardless of the input carry.
+    \item \textbf{Propagate ($P_i$):} $P_i = A_i \oplus B_i$. A carry is propagated if one of the inputs is 1.
+\end{itemize}
+
+The Boolean expression for the output carry of a stage is:
+\[ C_{i+1} = G_i + P_i C_i \]
+
+\subsection{Parallel Carry Logic}
+By substituting the carry equations recursively, we can express every carry bit solely in terms of the initial carry ($C_0$) and the $P/G$ signals of the current and preceding stages:
+\begin{align*}
+    C_1 &= G_0 + P_0 C_0 \\
+    C_2 &= G_1 + P_1 G_0 + P_1 P_0 C_0 \\
+    C_3 &= G_2 + P_2 G_1 + P_2 P_1 G_0 + P_2 P_1 P_0 C_0 \\
+    C_4 &= G_3 + P_3 G_2 + P_3 P_2 G_1 + P_3 P_2 P_1 G_0 + P_3 P_2 P_1 P_0 C_0
+\end{align*}
+
+Because these equations consist only of Sum-of-Products (SOP) forms, they can be implemented using two-level logic, resulting in a constant delay regardless of the number of bits.
+
+\section{Procedure}
+\begin{enumerate}
+    \item \textbf{Pre-computation:} Construct a sub-circuit using a \textbf{Half Adder} to output $P_i$ (Sum output) and $G_i$ (Carry output).
+    \item \textbf{Signal Routing:} Use \textbf{Tunnels} labeled $P_0 \dots P_3$ and $G_0 \dots G_3$ to distribute these signals to the Lookahead Carry Unit.
+    \item \textbf{Carry Logic Implementation:} Build the combinatorial logic for $C_1, C_2, C_3,$ and $C_4$ using multi-input AND/OR gates based on the equations in the Theory section.
+    \item \textbf{Sum Generation:} Compute the final sum bits using the relation $S_i = P_i \oplus C_i$.
+    \item \textbf{Verification:} Load the test case $A=1111$ and $B=0001$. Observe that $S=0000$ and $C_{out}=1$ appear virtually instantaneously across all stages.
+\end{enumerate}
+
+\section{Functional Truth Table}
+The following table describes the logic for a single-stage bit $i$ within the Carry Lookahead Adder. By calculating $G_i$ and $P_i$ first, the lookahead carry unit determines $C_{i+1}$ without waiting for a ripple.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{0.85\textwidth}{cc|cc|c|c}
+        \toprule
+        \rowcolor{lightgray!30} \textbf{Input $A_i$} & \textbf{Input $B_i$} & \textbf{$G_i$ (Gen)} & \textbf{$P_i$ (Prop)} & \textbf{Sum ($S_i$)} & \textbf{Carry Out ($C_{i+1}$)} \\
+        \midrule
+        0 & 0 & 0 & 0 & $C_i$ & 0 \\
+        0 & 1 & 0 & 1 & $\overline{C_i}$ & $C_i$ \\
+        1 & 0 & 0 & 1 & $\overline{C_i}$ & $C_i$ \\
+        1 & 1 & 1 & 0 & $C_i$ & 1 \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Functional logic of a CLA stage using Generate and Propagate signals.}
+    \label{tab:cla_logic}
+\end{table}
+
+\subsection{Verification Test Case: $1111 + 0001$}
+Applying the inputs $A=1111$ and $B=0001$ with $C_{in}=0$:
+\begin{itemize}
+    \item \textbf{Stage 0:} $G_0=0, P_0=1 \implies C_1 = 0 + 1(0) = 0$.
+    \item \textbf{Stage 1:} $G_1=0, P_1=1 \implies C_2 = 0 + 1(0) = 0$.
+    \item \textbf{Stage 2:} $G_2=0, P_2=1 \implies C_3 = 0 + 1(0) = 0$.
+    \item \textbf{Stage 3:} $G_3=0, P_3=1 \implies C_4 = 0 + 1(0) = 0$.
+    \item \textbf{Final Result:} $Sum = 0000$ with $C_{out} = 1$ (generated by the final Lookahead logic).
+\end{itemize}
+
+\section{Logisim Circuit Implementation}
+
+\subsection{4-Bit CLA Gate-Level Schematic}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{CLA.png}
+  \caption{4-Bit Carry Lookahead Adder implemented with Tunnels and Parallel Carry Logic.}
+  \label{fig:cla_circuit}
+\end{figure}
+
+\end{document}
