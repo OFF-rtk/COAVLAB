@@ -1448,11 +1448,17 @@
       <text dominant-baseline="central" font-family="SansSerif" font-size="12" text-anchor="middle" x="58" y="100">K</text>
       <text dominant-baseline="central" font-family="SansSerif" font-size="12" text-anchor="middle" x="103" y="61">Q</text>
       <circ-anchor facing="east" x="110" y="60"/>
+      <circ-port dir="in" pin="230,290" x="50" y="110"/>
+      <circ-port dir="in" pin="70,160" x="50" y="70"/>
       <circ-port dir="in" pin="90,100" x="50" y="60"/>
       <circ-port dir="in" pin="90,220" x="50" y="100"/>
       <circ-port dir="out" pin="390,140" x="110" y="60"/>
       <circ-port dir="out" pin="390,180" x="110" y="100"/>
     </appear>
+    <comp lib="0" loc="(230,290)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="north"/>
+    </comp>
     <comp lib="0" loc="(390,140)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
@@ -1463,10 +1469,8 @@
       <a name="facing" val="west"/>
       <a name="type" val="output"/>
     </comp>
-    <comp lib="0" loc="(50,160)" name="Clock">
-      <a name="appearance" val="NewPins"/>
-      <a name="highDuration" val="5"/>
-      <a name="lowDuration" val="5"/>
+    <comp lib="0" loc="(70,160)" name="Pin">
+      <a name="appearance" val="classic"/>
     </comp>
     <comp lib="0" loc="(90,100)" name="Pin">
       <a name="appearance" val="classic"/>
@@ -1480,9 +1484,7 @@
     <comp lib="1" loc="(190,200)" name="NAND Gate">
       <a name="inputs" val="3"/>
     </comp>
-    <comp loc="(100,160)" name="EdgeDetector"/>
     <comp loc="(310,140)" name="SRLatch"/>
-    <wire from="(100,160)" to="(120,160)"/>
     <wire from="(120,120)" to="(130,120)"/>
     <wire from="(120,140)" to="(120,160)"/>
     <wire from="(120,140)" to="(130,140)"/>
@@ -1499,13 +1501,15 @@
     <wire from="(220,140)" to="(250,140)"/>
     <wire from="(220,180)" to="(220,200)"/>
     <wire from="(220,180)" to="(250,180)"/>
+    <wire from="(230,200)" to="(230,290)"/>
+    <wire from="(230,200)" to="(250,200)"/>
     <wire from="(310,140)" to="(350,140)"/>
     <wire from="(310,180)" to="(370,180)"/>
     <wire from="(350,140)" to="(350,250)"/>
     <wire from="(350,140)" to="(390,140)"/>
     <wire from="(370,180)" to="(390,180)"/>
     <wire from="(370,70)" to="(370,180)"/>
-    <wire from="(50,160)" to="(60,160)"/>
+    <wire from="(70,160)" to="(120,160)"/>
     <wire from="(90,100)" to="(130,100)"/>
     <wire from="(90,220)" to="(130,220)"/>
   </circuit>
